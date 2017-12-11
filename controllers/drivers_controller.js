@@ -2,7 +2,7 @@ const Driver = require('./../models/driver');
 
 module.exports = {
 	greeting(req, res) {
-		res.send({hi: 'hello'})
+		res.send({ hi: 'hello' })
 	},
 
 	create(req, res, next) {
@@ -18,9 +18,18 @@ module.exports = {
 		const driverId = req.params.id;
 		const driverParams = req.body;
 
-		Driver.findByIdAndUpdate({_id: driverId}, driverParams)
+		Driver.findByIdAndUpdate({ _id: driverId }, driverParams)
 			.then(() => Driver.findById(driverId))
 			.then(driver => res.send(driver))
+			.catch(next)
+	},
+
+	delete(req, res, next) {
+		const driverId = req.params.id;
+		const driverProps = req.body;
+
+		Driver.findByIdAndRemove(driverId)
+			.then(driver => res.status(204).send(driver))
 			.catch(next)
 	}
 }
