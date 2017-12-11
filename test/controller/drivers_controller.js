@@ -51,5 +51,29 @@ describe('Drivers controller', () => {
 							})
 					})
 			})
-	})
+	});
+
+	it('GET to /api/drivers finds drivers in a location', done => {
+		
+		const driverA = new Driver({
+			email: 'driverA@test.com',
+			geometry: { type: 'Point', coordinates: [-122.4759902, 47.6147628] }
+		});
+
+		const driverB = new Driver({
+			email: 'driverB@test.com',
+			geometry: { type: 'Point', coordinates: [-80.253, 25.791] }
+		});
+
+		Promise.all([driverA.save(), driverB.save()])
+			.then(() => {
+				request(app)
+					.get('/api/drivers?lng=-80&lat=25')
+					.end((err, response) => {
+						assert(response.body.length === 1);
+						assert(response.body[0].obj.email === 'driverB@test.com')
+						done();
+					})
+			})
+	});
 })
